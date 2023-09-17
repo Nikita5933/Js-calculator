@@ -52,6 +52,10 @@
                 equalFlag = true;
                 result /= +outputMain.value;
             }
+            if (outputSecond.value[outputSecond.value.length - 2] == '*') {
+                equalFlag = true;
+                result *= +outputMain.value;
+            }
             outputSecond.value += +outputMain.value;
             outputSecond.value += ' ='
             outputMain.value = +result.toFixed(12);
@@ -88,6 +92,18 @@
                 }
                 result /= +outputSecond.value.split(/\D+/gm).filter(item => item != '')[1];
                 outputSecond.value = `${+(result * +(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])).toFixed(12)} / ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
+                outputMain.value = +result.toFixed(12);
+            }
+            if (outputSecond.value.split(/\d+/gm).includes(' * ')){
+                if(outputSecond.value.includes('.')) dotFlag = true;
+                if(dotFlag) {
+                result *= +outputSecond.value.split(/ \* | =/gm).filter(item => item != '')[1];
+                outputSecond.value = `${+(result / +(outputSecond.value.split(/ \* | =/gm).filter(item => item != '')[1])).toFixed(12)} * ${+(outputSecond.value.split(/ \* | =/gm).filter(item => item != '')[1])} =`;
+                outputMain.value = +result.toFixed(12);
+                return;
+                }
+                result *= +outputSecond.value.split(/\D+/gm).filter(item => item != '')[1];
+                outputSecond.value = `${+(result / +(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])).toFixed(12)} * ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
                 outputMain.value = +result.toFixed(12);
             }
         } 
@@ -177,7 +193,18 @@
         if (outputMain.value.match(/[\+\-\*\/]$/gm)) {
             outputMain.value = outputMain.value.substring(0, outputMain.value.length - 1);
         }
-        outputMain.value += '*';
+        opFlag = true;
+        if (!equalFlag) {
+            if (outputSecond.value == 0) {
+                outputSecond.value = +outputMain.value;
+            }
+            result += +outputMain.value;
+        }
+        
+        equalFlag = true;
+        outputSecond.value = +result.toFixed(12);
+        outputMain.value = +result.toFixed(12);
+        outputSecond.value += ' * ';
         outputMain.focus();
     })
     
