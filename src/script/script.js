@@ -12,11 +12,13 @@
     const separateBtn = document.querySelector('.separate');
     const multiplyBtn = document.querySelector('.multiply');
     const equal = document.querySelector('.equal');
+    const squareBtn = document.querySelector('.square');
     
     let result = 0;
     let opFlag = false;
     let equalFlag = false;
     let dotFlag = false;
+    let sqFlag = false;
     
     acBtn.addEventListener('click', () => {
         outputMain.value = 0;
@@ -25,6 +27,7 @@
         opFlag = false;
         equalFlag = false;
         dotFlag = false;
+        sqFlag = false;
     });
     cBtn.addEventListener('click', () => {
         outputMain.value = 0;
@@ -33,33 +36,45 @@
         opFlag = false;
         equalFlag = false;
         dotFlag = false;
+        sqFlag = false;
     })
     
     
     equal.addEventListener('click', () => {
         outputMain.focus();
-        if (outputSecond.value.match(/\s$/gm) == ' ') {
-            if (outputSecond.value[outputSecond.value.length - 2] == '+'){
+        
+        if (outputSecond.value.match(/\s$/gm) == ' ' || sqFlag) {
+            if (outputSecond.value.includes('+')){
                 result.toFixed(12)
                 equalFlag = true;
                 result += +outputMain.value;
             }
-            if (outputSecond.value[outputSecond.value.length - 2] == '-') {
+            if (outputSecond.value.includes('-')) {
                 equalFlag = true;
                 result -= +outputMain.value;
             }
-            if (outputSecond.value[outputSecond.value.length - 2] == '/') {
+            if (outputSecond.value.includes('/')) {
                 equalFlag = true;
                 result /= +outputMain.value;
             }
-            if (outputSecond.value[outputSecond.value.length - 2] == '*') {
+            if (outputSecond.value.includes('*')) {
                 equalFlag = true;
                 result *= +outputMain.value;
+            }
+            if(outputSecond.value.includes('sqr')) {
+                sqFlag = false;
+                outputSecond.value += ' ='
+                outputMain.value = +result.toFixed(12);
+                return;
             }
             outputSecond.value += +outputMain.value;
             outputSecond.value += ' ='
             outputMain.value = +result.toFixed(12);
         } else if (outputSecond.value[outputSecond.value.length - 1] == '=' ) {
+            if(outputSecond.value.includes('sqr')) {
+                outputSecond.value = `${outputSecond.value.split('').slice(0,3).join('')} ${+outputMain.value - +outputSecond.value.split('').slice(0,1).join('')} =`;
+                return;
+            }
             if (outputSecond.value.split(/\d+/gm).includes(' + ')){
                 if(dotFlag) {
                     result += +outputSecond.value.split(/ \+ | =/gm).filter(item => item != '')[1];
@@ -113,9 +128,10 @@
         dotFlag = true;
        if (outputMain.value == 0 && !outputMain.value.match(/\./gm)) {
             outputMain.value += '.';
-       } else if (!outputMain.value.match(/\./gm) && equalFlag && opFlag) {
+       } else if (sqFlag || !outputMain.value.match(/\./gm) && equalFlag && opFlag) {
             equalFlag = false;
             opFlag = false;
+            sqFlag = false;
             outputMain.value = '0.';
         } else if (result != 0 && opFlag && equalFlag) {
             opFlag = false;
@@ -136,9 +152,6 @@
         outputMain.focus();
     });
     plusBtn.addEventListener('click', () => {
-        if (outputMain.value.match(/[\+\-\*\/]$/gm)) {
-            outputMain.value = outputMain.value.substring(0, outputMain.value.length - 1);
-        }
         opFlag = true;
         if (!equalFlag) {
             if (outputSecond.value == 0) {
@@ -148,66 +161,109 @@
         }
       
         equalFlag = true;
+        sqFlag = false;
         outputSecond.value = +result.toFixed(12);
         outputMain.value = +result.toFixed(12);
         outputSecond.value += ' + ';
         outputMain.focus();
     })
     minusBtn.addEventListener('click', () => {
-        if (outputMain.value.match(/[\+\-\*\/]$/gm)) {
-            outputMain.value = outputMain.value.substring(0, outputMain.value.length - 1);
-        }
         opFlag = true;
         if (!equalFlag) {
             if (outputSecond.value == 0) {
                 outputSecond.value = +outputMain.value;
+                result = +outputMain.value;      
+                equalFlag = true;
+                sqFlag = false;
+                outputSecond.value = +result.toFixed(12);
+                outputMain.value = +result.toFixed(12);
+                outputSecond.value += ' - ';
+                outputMain.focus();
+                return;
             }
-            result += +outputMain.value;
+            
+            result -= +outputMain.value;
         }
        
         equalFlag = true;
+        sqFlag = false;
         outputSecond.value = +result.toFixed(12);
         outputMain.value = +result.toFixed(12);
         outputSecond.value += ' - ';
         outputMain.focus();
     })
     separateBtn.addEventListener('click', () => {
-        if (outputMain.value.match(/[\+\-\*\/]$/gm)) {
-            outputMain.value = outputMain.value.substring(0, outputMain.value.length - 1);
-        }
         opFlag = true;
         if (!equalFlag) {
             if (outputSecond.value == 0) {
                 outputSecond.value = +outputMain.value;
+                result = +outputMain.value;      
+                equalFlag = true;
+                sqFlag = false;
+                outputSecond.value = +result.toFixed(12);
+                outputMain.value = +result.toFixed(12);
+                outputSecond.value += ' / ';
+                outputMain.focus();
+                return;
             }
-            result += +outputMain.value;
+            
+            result /= +outputMain.value;
         }
         
         equalFlag = true;
+        sqFlag = false;
         outputSecond.value = +result.toFixed(12);
         outputMain.value = +result.toFixed(12);
         outputSecond.value += ' / ';
         outputMain.focus();
     })
     multiplyBtn.addEventListener('click', () => {
-        if (outputMain.value.match(/[\+\-\*\/]$/gm)) {
-            outputMain.value = outputMain.value.substring(0, outputMain.value.length - 1);
-        }
         opFlag = true;
         if (!equalFlag) {
             if (outputSecond.value == 0) {
                 outputSecond.value = +outputMain.value;
+                result = +outputMain.value;      
+                equalFlag = true;
+                sqFlag = false;
+                outputSecond.value = +result.toFixed(12);
+                outputMain.value = +result.toFixed(12);
+                outputSecond.value += ' * ';
+                outputMain.focus();
+                return;
             }
-            result += +outputMain.value;
+            
+            result *= +outputMain.value;
         }
         
         equalFlag = true;
+        sqFlag = false;
         outputSecond.value = +result.toFixed(12);
         outputMain.value = +result.toFixed(12);
         outputSecond.value += ' * ';
         outputMain.focus();
     })
-    
+    squareBtn.addEventListener('click', () => {
+        if (outputSecond.value == '0') {
+            sqFlag = true
+            outputSecond.value = `sqr(${outputMain.value})`;
+            outputMain.value = Math.pow(+outputMain.value, 2);
+            return;
+        }
+        if (sqFlag) {
+            outputMain.value = Math.pow(+outputMain.value, 2);
+           
+            console.log(outputSecond.value.split(/\D+/gm));
+            console.log(outputSecond.value.split(/\d+/gm));
+            outputSecond.value = `${outputSecond.value.split(/\D+/gm)[0]}${outputSecond.value.split(/\d+/gm)[1]}sqr(${outputSecond.value.split(/\D+/gm)[1]}${outputSecond.value.split(/\d+/gm)[2]})`;
+            return; 
+        }
+        sqFlag = true;
+        if (outputSecond.value.match(/\+|\-|\*|\//gm)) {
+            outputSecond.value += `sqr(${outputMain.value})`;
+            outputMain.value = Math.pow(+outputMain.value, 2);
+            return
+        }
+    })
     
     numbers.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -217,9 +273,10 @@
                     outputMain.value += 9;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false
                 outputMain.value = 9;
             } else if (outputMain.value != 0) {
                 outputMain.value += 9;
@@ -230,9 +287,10 @@
                     outputMain.value += 8;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false;
                 outputMain.value = 8;
             } else if (outputMain.value != 0) {
                 outputMain.value += 8;
@@ -243,9 +301,10 @@
                     outputMain.value += 7;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false;
                 outputMain.value = 7;
             } else if (outputMain.value != 0) {
                 outputMain.value += 7;
@@ -256,9 +315,10 @@
                     outputMain.value += 6;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false;
                 outputMain.value = 6;
             } else if (outputMain.value != 0) {
                 outputMain.value += 6;
@@ -269,9 +329,10 @@
                     outputMain.value += 5;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false;
                 outputMain.value = 5;
             } else if (outputMain.value != 0) {
                 outputMain.value += 5;
@@ -282,9 +343,10 @@
                     outputMain.value += 4;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false;
                 outputMain.value = 4;
             } else if (outputMain.value != 0) {
                 outputMain.value += 4;
@@ -295,9 +357,10 @@
                     outputMain.value += 3;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false;
                 outputMain.value = 3;
             } else if (outputMain.value != 0) {
                 outputMain.value += 3;
@@ -308,9 +371,10 @@
                     outputMain.value += 2;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false;
                 outputMain.value = 2;
             } else if (outputMain.value != 0) {
                 outputMain.value += 2;
@@ -321,9 +385,10 @@
                     outputMain.value += 1;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                 equalFlag = false;
                 opFlag = false;
+                sqFlag = false;
                 outputMain.value = 1;
             } else if (outputMain.value != 0) {
                 outputMain.value += 1;
@@ -334,9 +399,10 @@
                     outputMain.value += 0;
                     equalFlag = false;
                     opFlag = false;
-                } else if (outputMain.value == 0 || equalFlag || opFlag) {
+                } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
                     equalFlag = false;
                     opFlag = false;
+                    sqFlag = false;
                     outputMain.value = 0;
                 } else if (outputMain.value !== 0) {
                     outputMain.value += 0;
