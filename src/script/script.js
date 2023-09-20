@@ -39,7 +39,7 @@
         sqFlag = false;
     })
     
-    
+    let sqrRes;
     equal.addEventListener('click', () => {
         outputMain.focus();
         
@@ -62,6 +62,7 @@
                 result *= +outputMain.value;
             }
             if(outputSecond.value.includes('sqr')) {
+                sqrRes = +outputMain.value;
                 sqFlag = false;
                 outputSecond.value += ' ='
                 outputMain.value = +result.toFixed(12);
@@ -72,7 +73,9 @@
             outputMain.value = +result.toFixed(12);
         } else if (outputSecond.value[outputSecond.value.length - 1] == '=' ) {
             if(outputSecond.value.includes('sqr')) {
-                outputSecond.value = `${outputSecond.value.split('').slice(0,3).join('')} ${+outputMain.value - +outputSecond.value.split('').slice(0,1).join('')} =`;
+                console.log(outputSecond.value.split(/([^\d|.]+)/gm));
+                console.log(outputSecond.value.split(/\d+/gm));
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrRes} =`;
                 return;
             }
             if (outputSecond.value.split(/\d+/gm).includes(' + ')){
@@ -121,7 +124,8 @@
                 outputSecond.value = `${+(result / +(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])).toFixed(12)} * ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
                 outputMain.value = +result.toFixed(12);
             }
-        } 
+        }
+        sqrRes = 0;
     })
     
     dotBtn.addEventListener('click', () => {
@@ -244,25 +248,24 @@
     })
     squareBtn.addEventListener('click', () => {
         if (outputSecond.value == '0') {
-            sqFlag = true
+            sqFlag = true;
             outputSecond.value = `sqr(${outputMain.value})`;
-            outputMain.value = Math.pow(+outputMain.value, 2);
+            outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(12);
             return;
         }
-        if (sqFlag) {
-            outputMain.value = Math.pow(+outputMain.value, 2);
-           
-            console.log(outputSecond.value.split(/\D+/gm));
-            console.log(outputSecond.value.split(/\d+/gm));
-            outputSecond.value = `${outputSecond.value.split(/\D+/gm)[0]}${outputSecond.value.split(/\d+/gm)[1]}sqr(${outputSecond.value.split(/\D+/gm)[1]}${outputSecond.value.split(/\d+/gm)[2]})`;
+        if (sqFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
+            outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(12);
+            outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]}${outputSecond.value.split(/([^\d|.]+)/gm)[1]}sqr(${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
             return; 
         }
         sqFlag = true;
         if (outputSecond.value.match(/\+|\-|\*|\//gm)) {
             outputSecond.value += `sqr(${outputMain.value})`;
-            outputMain.value = Math.pow(+outputMain.value, 2);
+            outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(12);
             return
         }
+        outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(12);
+        outputSecond.value = `sqr(${outputSecond.value.split(/([^\d|.]+)/gm)[1]}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
     })
     
     numbers.forEach(item => {
