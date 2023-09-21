@@ -73,8 +73,6 @@
             outputMain.value = +result.toFixed(12);
         } else if (outputSecond.value[outputSecond.value.length - 1] == '=' ) {
             if(outputSecond.value.includes('sqr')) {
-                console.log(outputSecond.value.split(/([^\d|.]+)/gm));
-                console.log(outputSecond.value.split(/\d+/gm));
                 outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrRes} =`;
                 return;
             }
@@ -159,11 +157,22 @@
         opFlag = true;
         if (!equalFlag) {
             if (outputSecond.value == 0) {
-                outputSecond.value = +outputMain.value; 
+                outputSecond.value = +outputMain.value;
             }
+            if (outputSecond.value[outputSecond.value.length-2] == '*') {
+                result *= +outputMain.value;
+                result -= +outputMain.value;
+            }
+            if (outputSecond.value[outputSecond.value.length-2] == '/') {
+                result /= +outputMain.value;
+                result -= +outputMain.value;
+            }
+            if (outputSecond.value[outputSecond.value.length-2] == '-') {
+                result -= +outputMain.value * 2;
+            }  
             result += +outputMain.value;
         }
-      
+            
         equalFlag = true;
         sqFlag = false;
         outputSecond.value = +result.toFixed(12);
@@ -185,8 +194,18 @@
                 outputMain.focus();
                 return;
             }
-            
-            result -= +outputMain.value;
+            if (outputSecond.value[outputSecond.value.length-2] == '*') {
+                result *= +outputMain.value;
+                result += +outputMain.value;
+            }
+            if (outputSecond.value[outputSecond.value.length-2] == '/') {
+                result /= +outputMain.value;
+                result += +outputMain.value;
+            }
+            if (outputSecond.value[outputSecond.value.length-2] == '+') {
+                result += +outputMain.value * 2;
+            }
+            result = result == 0 ? +outputMain.value : result -= +outputMain.value;
         }
        
         equalFlag = true;
@@ -210,8 +229,19 @@
                 outputMain.focus();
                 return;
             }
-            
-            result /= +outputMain.value;
+            if (outputSecond.value[outputSecond.value.length-2] == '*') {
+                result *= +outputMain.value;
+                result *= +outputMain.value;
+            }
+            if (outputSecond.value[outputSecond.value.length-2] == '-') {
+                result -= +outputMain.value;
+                result *= +outputMain.value;
+            }
+            if (outputSecond.value[outputSecond.value.length-2] == '+') {
+                result += +outputMain.value;
+                result *= +outputMain.value ;
+            }
+            result = result == 0 ? +outputMain.value : result /= +outputMain.value;
         }
         
         equalFlag = true;
@@ -233,10 +263,23 @@
                 outputMain.value = +result.toFixed(12);
                 outputSecond.value += ' * ';
                 outputMain.focus();
+                console.log(result);
                 return;
             }
+            if (outputSecond.value[outputSecond.value.length-2] == '/') {
+                result /= +outputMain.value;
+                result /= +outputMain.value;
+            }
+            if (outputSecond.value[outputSecond.value.length-2] == '-') {
+                result -= +outputMain.value;
+                result /= +outputMain.value;
+            }
+            if (outputSecond.value[outputSecond.value.length-2] == '+') {
+                result += +outputMain.value;
+                result /= +outputMain.value ;
+            }
+            result = result == 0 ? 1 * +outputMain.value : result *= +outputMain.value;
             
-            result *= +outputMain.value;
         }
         
         equalFlag = true;
