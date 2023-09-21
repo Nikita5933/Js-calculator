@@ -13,12 +13,14 @@
     const multiplyBtn = document.querySelector('.multiply');
     const equal = document.querySelector('.equal');
     const squareBtn = document.querySelector('.square');
+    const sqrtBtn = document.querySelector('.sqrt');
     
     let result = 0;
     let opFlag = false;
     let equalFlag = false;
     let dotFlag = false;
     let sqFlag = false;
+    let sqrtFlag = false;
     
     acBtn.addEventListener('click', () => {
         outputMain.value = 0;
@@ -28,6 +30,7 @@
         equalFlag = false;
         dotFlag = false;
         sqFlag = false;
+        sqrtFlag = false;
     });
     cBtn.addEventListener('click', () => {
         outputMain.value = 0;
@@ -37,13 +40,15 @@
         equalFlag = false;
         dotFlag = false;
         sqFlag = false;
+        sqrtFlag = false;
     })
     
     let sqrRes;
+    let sqrtRes;
     equal.addEventListener('click', () => {
         outputMain.focus();
         
-        if (outputSecond.value.match(/\s$/gm) == ' ' || sqFlag) {
+        if (outputSecond.value.match(/\s$/gm) == ' ' || sqFlag || sqrtFlag) {
             if (outputSecond.value.includes('+')){
                 result.toFixed(12)
                 equalFlag = true;
@@ -68,6 +73,13 @@
                 outputMain.value = +result.toFixed(12);
                 return;
             }
+            if (outputSecond.value.includes('√')) {
+                sqrtRes = +outputMain.value;
+                sqrtFlag = false;
+                outputSecond.value += ' ='
+                outputMain.value = +result.toFixed(12);
+                return;
+            }
             outputSecond.value += +outputMain.value;
             outputSecond.value += ' ='
             outputMain.value = +result.toFixed(12);
@@ -76,6 +88,11 @@
                 outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrRes} =`;
                 return;
             }
+            if(outputSecond.value.includes('√')) {
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrtRes} =`;
+                return;
+            }
+            if(outputSecond.value.includes('.')) dotFlag = true;
             if (outputSecond.value.split(/\d+/gm).includes(' + ')){
                 if(dotFlag) {
                     result += +outputSecond.value.split(/ \+ | =/gm).filter(item => item != '')[1];
@@ -83,6 +100,7 @@
                     outputMain.value = +result.toFixed(12);
                     return;
                     }
+                    console.log(+outputSecond.value.split(/\D+/gm).filter(item => item != '')[1]);
                 result += +outputSecond.value.split(/\D+/gm).filter(item => item != '')[1];
                 outputSecond.value = `${+(result - (outputSecond.value.split(/\D+/gm).filter(item => item != ''))[1]).toFixed(12)} + ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
                 outputMain.value = +result.toFixed(12);
@@ -130,10 +148,11 @@
         dotFlag = true;
        if (outputMain.value == 0 && !outputMain.value.match(/\./gm)) {
             outputMain.value += '.';
-       } else if (sqFlag || !outputMain.value.match(/\./gm) && equalFlag && opFlag) {
+       } else if (sqFlag || sqrtFlag || !outputMain.value.match(/\./gm) && equalFlag && opFlag) {
             equalFlag = false;
             opFlag = false;
             sqFlag = false;
+            sqrtFlag = false;
             outputMain.value = '0.';
         } else if (result != 0 && opFlag && equalFlag) {
             opFlag = false;
@@ -175,6 +194,7 @@
             
         equalFlag = true;
         sqFlag = false;
+        sqrtFlag = false;
         outputSecond.value = +result.toFixed(12);
         outputMain.value = +result.toFixed(12);
         outputSecond.value += ' + ';
@@ -188,6 +208,7 @@
                 result = +outputMain.value;      
                 equalFlag = true;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputSecond.value = +result.toFixed(12);
                 outputMain.value = +result.toFixed(12);
                 outputSecond.value += ' - ';
@@ -210,6 +231,7 @@
        
         equalFlag = true;
         sqFlag = false;
+        sqrtFlag = false;
         outputSecond.value = +result.toFixed(12);
         outputMain.value = +result.toFixed(12);
         outputSecond.value += ' - ';
@@ -223,6 +245,7 @@
                 result = +outputMain.value;      
                 equalFlag = true;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputSecond.value = +result.toFixed(12);
                 outputMain.value = +result.toFixed(12);
                 outputSecond.value += ' / ';
@@ -246,6 +269,7 @@
         
         equalFlag = true;
         sqFlag = false;
+        sqrtFlag = false;
         outputSecond.value = +result.toFixed(12);
         outputMain.value = +result.toFixed(12);
         outputSecond.value += ' / ';
@@ -259,6 +283,7 @@
                 result = +outputMain.value;      
                 equalFlag = true;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputSecond.value = +result.toFixed(12);
                 outputMain.value = +result.toFixed(12);
                 outputSecond.value += ' * ';
@@ -284,6 +309,7 @@
         
         equalFlag = true;
         sqFlag = false;
+        sqrtFlag = false;
         outputSecond.value = +result.toFixed(12);
         outputMain.value = +result.toFixed(12);
         outputSecond.value += ' * ';
@@ -294,6 +320,12 @@
             sqFlag = true;
             outputSecond.value = `sqr(${outputMain.value})`;
             outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(12);
+            return;
+        }
+        if (sqrtFlag) {
+            outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
+            console.log(outputSecond.value.split(/([^\d|.]+)/gm));
+            outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} sqr(${outputSecond.value.split(/([^\d|.]+)/gm)[1].slice(3,outputSecond.value.split(/([^\d|.]+)/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
             return;
         }
         if (sqFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
@@ -307,8 +339,41 @@
             outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(12);
             return
         }
+        
         outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(12);
         outputSecond.value = `sqr(${outputSecond.value.split(/([^\d|.]+)/gm)[1]}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+    });
+    sqrtBtn.addEventListener('click', () => {
+        if (outputSecond.value == '0') {
+            sqrtFlag = true;
+            outputSecond.value = `√(${outputMain.value})`;
+            outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
+            return;
+        }
+        if (sqFlag) {
+            outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(15);
+            outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} √(${outputSecond.value.split(/([^\d|.]+)/gm)[1].slice(3,outputSecond.value.split(/([^\d|.]+)/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+            return;
+        }
+        if (sqrtFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
+            outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
+            outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]}${outputSecond.value.split(/([^\d|.]+)/gm)[1]}√(${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+            return; 
+        }
+        sqrtFlag = true;
+        if (outputSecond.value.match(/\+|\-|\*|\//gm)) {
+            if (outputSecond.value.includes('sqr')) {
+                outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]}${outputSecond.value.split(/([^\d|.]+)/gm)[1]}√(${outputSecond.value.split(/([^\d|.]+)/gm)[1]}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]}))`;
+                return;
+            }
+            outputSecond.value += `√(${outputMain.value})`;
+            outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
+            return;
+        }
+        console.log(123);
+        outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
+        outputSecond.value = `√(${outputSecond.value.split(/([^\d|.]+)/gm)[1]}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
     })
     
     numbers.forEach(item => {
@@ -319,10 +384,11 @@
                     outputMain.value += 9;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
-                sqFlag = false
+                sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 9;
             } else if (outputMain.value != 0) {
                 outputMain.value += 9;
@@ -333,10 +399,11 @@
                     outputMain.value += 8;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 8;
             } else if (outputMain.value != 0) {
                 outputMain.value += 8;
@@ -347,10 +414,11 @@
                     outputMain.value += 7;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 7;
             } else if (outputMain.value != 0) {
                 outputMain.value += 7;
@@ -361,10 +429,11 @@
                     outputMain.value += 6;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 6;
             } else if (outputMain.value != 0) {
                 outputMain.value += 6;
@@ -375,10 +444,11 @@
                     outputMain.value += 5;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 5;
             } else if (outputMain.value != 0) {
                 outputMain.value += 5;
@@ -389,10 +459,11 @@
                     outputMain.value += 4;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 4;
             } else if (outputMain.value != 0) {
                 outputMain.value += 4;
@@ -403,10 +474,11 @@
                     outputMain.value += 3;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 3;
             } else if (outputMain.value != 0) {
                 outputMain.value += 3;
@@ -417,10 +489,11 @@
                     outputMain.value += 2;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 2;
             } else if (outputMain.value != 0) {
                 outputMain.value += 2;
@@ -431,10 +504,11 @@
                     outputMain.value += 1;
                     equalFlag = false;
                     opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                 equalFlag = false;
                 opFlag = false;
                 sqFlag = false;
+                sqrtFlag = false;
                 outputMain.value = 1;
             } else if (outputMain.value != 0) {
                 outputMain.value += 1;
@@ -445,10 +519,11 @@
                     outputMain.value += 0;
                     equalFlag = false;
                     opFlag = false;
-                } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag) {
+                } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
                     equalFlag = false;
                     opFlag = false;
                     sqFlag = false;
+                    sqrtFlag = false;
                     outputMain.value = 0;
                 } else if (outputMain.value !== 0) {
                     outputMain.value += 0;
