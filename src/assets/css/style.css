@@ -29,25 +29,6 @@ html {
     padding: 14px 0px 0 0px;
 }
 
-.output__first input {
-    background-color: rgba(0, 0, 0, .0);
-    color: white;
-    font-size: 28px;
-    width: 100%;
-    text-align: right;
-    border: none;
-    outline: none;
-}
-
-.output__second input {
-    background-color: rgba(0, 0, 0, .0);
-    color: white;
-    font-size: 56px;
-    width: 100%;
-    text-align: right;
-    border: none;
-    outline: none;
-}
 
 .keyboard {
     height: 100%;
@@ -88,4 +69,36 @@ html {
 
 sup {
     margin-bottom: 20px;
+}
+
+
+.output__first input {
+    background-color: rgba(0, 0, 0, .0);
+    color: white;
+    font-size: 20px;
+    width: 100%;
+    text-align: right;
+    border: none;
+    outline: none;
+}
+
+.output__second input {
+    background-color: rgba(0, 0, 0, .0);
+    margin-top: 10px;
+    color: white;
+    font-size: 56px;
+    width: 100%;
+    text-align: right;
+    border: none;
+    outline: none;
+}
+
+.number14 div:last-child input {
+    font-size: 48px;
+    margin-top: 15px;
+}
+
+.number16 div:last-child input {
+    font-size: 44px;
+    margin-top: 20px;
 }

@@ -3,6 +3,7 @@
     const numbers = document.querySelectorAll('.number');
     const outputMain = document.querySelector('.output__second input');
     const outputSecond = document.querySelector('.output__first input');
+    const output = document.querySelector('.output');
     const acBtn = document.querySelector('.ac');
     const cBtn = document.querySelector('.c');
     const delBtn = document.querySelector('.del');
@@ -21,6 +22,20 @@
     let dotFlag = false;
     let sqFlag = false;
     let sqrtFlag = false;
+
+    function smaller(output,screen) {
+        if (screen.value.length > 11) output.classList.add('number14');
+        if (screen.value.length > 13) output.classList.add('number16');
+        if (screen.value.length >= 16) screen.value = screen.value.substring(0, screen.value.length - 1);
+    }
+    function bigger(output,screen) {
+        if (screen.value.length < 13) output.classList.remove('number14');
+        if (screen.value.length < 15) output.classList.remove('number16');
+        if (opFlag) {
+            output.classList.remove('number14')
+            output.classList.remove('number16')
+        }
+    }
     
     acBtn.addEventListener('click', () => {
         outputMain.value = 0;
@@ -31,6 +46,7 @@
         dotFlag = false;
         sqFlag = false;
         sqrtFlag = false;
+        bigger(output,outputMain);
     });
     cBtn.addEventListener('click', () => {
         outputMain.value = 0;
@@ -41,18 +57,18 @@
         dotFlag = false;
         sqFlag = false;
         sqrtFlag = false;
+        bigger(output,outputMain);
     })
     
     let sqrRes;
     let sqrtRes;
     equal.addEventListener('click', () => {
         outputMain.focus();
-        
         if (outputSecond.value.match(/\s$/gm) == ' ' || sqFlag || sqrtFlag) {
             if (outputSecond.value.includes('+')){
-                result.toFixed(12)
+                console.log(23);
                 equalFlag = true;
-                result += +outputMain.value;
+                result = +outputMain.value;
             }
             if (outputSecond.value.includes('-')) {
                 equalFlag = true;
@@ -66,8 +82,24 @@
                 equalFlag = true;
                 result *= +outputMain.value;
             }
+            if (outputSecond.value.includes('sqr') && outputSecond.value.includes('√')) {
+                if (outputSecond.value[outputSecond.value.length - 1] == '=') {
+                    outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrRes.toFixed(12)} =`;
+                    equalFlag = true;
+                    sqFlag = false;
+                    sqrtFlag = false;
+                    return;
+                }
+                sqrRes = +outputMain.value;
+                equalFlag = true;
+                sqFlag = false;
+                outputSecond.value += ' ='
+                outputMain.value = +result.toFixed(12);
+                return;
+            };
             if(outputSecond.value.includes('sqr')) {
                 sqrRes = +outputMain.value;
+                equalFlag = true;
                 sqFlag = false;
                 outputSecond.value += ' ='
                 outputMain.value = +result.toFixed(12);
@@ -75,6 +107,7 @@
             }
             if (outputSecond.value.includes('√')) {
                 sqrtRes = +outputMain.value;
+                equalFlag = true;
                 sqrtFlag = false;
                 outputSecond.value += ' ='
                 outputMain.value = +result.toFixed(12);
@@ -83,13 +116,13 @@
             outputSecond.value += +outputMain.value;
             outputSecond.value += ' ='
             outputMain.value = +result.toFixed(12);
-        } else if (outputSecond.value[outputSecond.value.length - 1] == '=' ) {
+        } else if (outputSecond.value[outputSecond.value.length - 1] == '=') {
             if(outputSecond.value.includes('sqr')) {
-                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrRes} =`;
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrRes.toFixed(12)} =`;
                 return;
             }
             if(outputSecond.value.includes('√')) {
-                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrtRes} =`;
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrtRes.toFixed(12)} =`;
                 return;
             }
             if(outputSecond.value.includes('.')) dotFlag = true;
@@ -99,8 +132,8 @@
                     outputSecond.value = `${+(result - +(outputSecond.value.split(/ \+ | =/gm).filter(item => item != '')[1])).toFixed(12)} + ${+(outputSecond.value.split(/ \+ | =/gm).filter(item => item != '')[1])} =`;
                     outputMain.value = +result.toFixed(12);
                     return;
-                    }
-                    console.log(+outputSecond.value.split(/\D+/gm).filter(item => item != '')[1]);
+                }
+                
                 result += +outputSecond.value.split(/\D+/gm).filter(item => item != '')[1];
                 outputSecond.value = `${+(result - (outputSecond.value.split(/\D+/gm).filter(item => item != ''))[1]).toFixed(12)} + ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
                 outputMain.value = +result.toFixed(12);
@@ -145,6 +178,8 @@
     })
     
     dotBtn.addEventListener('click', () => {
+        smaller(output,outputMain);
+        bigger(output,outputMain);
         dotFlag = true;
        if (outputMain.value == 0 && !outputMain.value.match(/\./gm)) {
             outputMain.value += '.';
@@ -171,6 +206,7 @@
             outputMain.value = outputMain.value.substring(0, outputMain.value.length - 1);
         }
         outputMain.focus();
+        bigger(output,outputMain);
     });
     plusBtn.addEventListener('click', () => {
         opFlag = true;
@@ -277,6 +313,7 @@
     })
     multiplyBtn.addEventListener('click', () => {
         opFlag = true;
+        bigger(output,outputMain);
         if (!equalFlag) {
             if (outputSecond.value == 0) {
                 outputSecond.value = +outputMain.value;
@@ -288,7 +325,6 @@
                 outputMain.value = +result.toFixed(12);
                 outputSecond.value += ' * ';
                 outputMain.focus();
-                console.log(result);
                 return;
             }
             if (outputSecond.value[outputSecond.value.length-2] == '/') {
@@ -322,9 +358,8 @@
             outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(12);
             return;
         }
-        if (sqrtFlag) {
-            outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
-            console.log(outputSecond.value.split(/([^\d|.]+)/gm));
+        if (sqrtFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
+            outputMain.value = +Math.pow(+outputMain.value,2).toFixed(15);
             outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} sqr(${outputSecond.value.split(/([^\d|.]+)/gm)[1].slice(3,outputSecond.value.split(/([^\d|.]+)/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
             return;
         }
@@ -350,8 +385,8 @@
             outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
             return;
         }
-        if (sqFlag) {
-            outputMain.value = +Math.pow(+outputMain.value, 2).toFixed(15);
+        if (sqFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
+            outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
             outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} √(${outputSecond.value.split(/([^\d|.]+)/gm)[1].slice(3,outputSecond.value.split(/([^\d|.]+)/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
             return;
         }
@@ -371,7 +406,6 @@
             outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
             return;
         }
-        console.log(123);
         outputMain.value = +Math.sqrt(+outputMain.value).toFixed(15);
         outputSecond.value = `√(${outputSecond.value.split(/([^\d|.]+)/gm)[1]}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
     })
@@ -379,6 +413,8 @@
     numbers.forEach(item => {
         item.addEventListener('click', (e) => {
             const target = e.target;
+            smaller(output,outputMain);
+            bigger(output,outputMain);
             if (target.classList.contains('number__nine')) {
                 if (outputMain.value.match(/\./gm) && !opFlag) {
                     outputMain.value += 9;
