@@ -44,6 +44,15 @@ html {
 
 .keyboard>button:last-child {
     grid-column: 3/5;
+    color: white;
+    font-size: 34px;
+    background-color: rgb(33, 33, 110);
+    transition: background 0.1s;
+}
+
+.keyboard>button:last-child:hover {
+    opacity: 1;
+    background-color: rgb(57 57 127)
 }
 
 .keyboard button {
@@ -101,4 +110,12 @@ sup {
 .number16 div:last-child input {
     font-size: 44px;
     margin-top: 20px;
+}
+
+.keyboard button.blur {
+    color: rgb(163, 139, 139);
+}
+
+.keyboard button.blur:hover {
+    opacity: inherit;
 }
