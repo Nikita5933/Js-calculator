@@ -1,12 +1,9 @@
-
 'use strict';
 
-const numbers = document.querySelectorAll('.number');
+const keyboard = document.querySelector('.keyboard');
 const outputMain = document.querySelector('.output__second input');
 const outputSecond = document.querySelector('.output__first input');
 const output = document.querySelector('.output');
-const acBtn = document.querySelector('.ac');
-const cBtn = document.querySelector('.c');
 const delBtn = document.querySelector('.del');
 const dotBtn = document.querySelector('.dot');
 const plusBtn = document.querySelector('.plus');
@@ -17,11 +14,6 @@ const equal = document.querySelector('.equal');
 const squareBtn = document.querySelector('.square');
 const sqrtBtn = document.querySelector('.sqrt');
 const percent = document.querySelector('.percent');
-const memoryPlus = document.querySelector('.memory__plus');
-const memoryMinus = document.querySelector('.memory__minus');
-const memoryResult = document.querySelector('.memory__result');
-const memoryReset = document.querySelector('.memory__reset');
-
 let result = 0;
 let opFlag = false;
 let equalFlag = false;
@@ -66,79 +58,6 @@ function resizer(output,screen) {
         output.classList.remove('number16')
     }
 }
-
-memoryPlus.addEventListener('click', () =>  {
-    if (outputSecond.value.includes('=') || outputSecond.value.includes('sqr') || outputSecond.value.includes('√')) {
-        outputSecond.value = 0;
-        equalFlag = false;
-    }
-    memoryFlag = true;
-    memoryRes += +outputMain.value;
-    memoryResult.classList.remove('blur');
-    memoryReset.classList.remove('blur');
-    opFlag = true;
-    equalFlag = true;
-    dotFlag = true;
-})
-
-memoryMinus.addEventListener('click', () =>  {
-    if (outputSecond.value.includes('=') || outputSecond.value.includes('sqr') || outputSecond.value.includes('√')) {
-        outputSecond.value = 0;
-        equalFlag = false;
-    }
-    memoryFlag = true;
-    memoryRes -= +outputMain.value;
-    memoryResult.classList.remove('blur');
-    memoryReset.classList.remove('blur');
-    opFlag = true;
-    equalFlag = true;
-})
-
-memoryResult.addEventListener('click', () => {
-    outputMain.value = round(memoryRes,12);
-    result = memoryRes;
-    opFlag = true;
-    equalFlag = true;
-    resizer(output,outputMain);
-})
-
-memoryReset.addEventListener('click', () => {
-    memoryRes = 0;
-    memoryFlag = false;
-    opFlag = true;
-    equalFlag = true;
-    memoryFlag = false;
-    memoryResult.classList.add('blur');
-    memoryReset.classList.add('blur');
-})
-
-
-acBtn.addEventListener('click', () => {
-    outputMain.value = 0;
-    outputSecond.value = 0;
-    result = 0;
-    memoryRes = 0;
-    opFlag = false;
-    equalFlag = false;
-    dotFlag = false;
-    sqFlag = false;
-    sqrtFlag = false;
-    memoryResult.classList.add('blur');
-    memoryReset.classList.add('blur');
-    memoryFlag = false;
-    resizer(output,outputMain);
-});
-cBtn.addEventListener('click', () => {
-    outputMain.value = 0;
-    outputSecond.value = 0;
-    result = 0;
-    opFlag = false;
-    equalFlag = false;
-    dotFlag = false;
-    sqFlag = false;
-    sqrtFlag = false;
-    resizer(output,outputMain);
-})
 
 let sqrRes;
 let sqrtRes;
@@ -397,8 +316,6 @@ separateBtn.addEventListener('click', () => {
         }
         result = result == 0 ? +outputMain.value : result /= +outputMain.value;
     }
-    
-
     equalFlag = true;
     sqFlag = false;
     sqrtFlag = false;
@@ -439,7 +356,6 @@ multiplyBtn.addEventListener('click', () => {
         result = result == 0 ? 1 * +outputMain.value : result *= +outputMain.value;
         
     }
-    
     equalFlag = true;
     sqFlag = false;
     sqrtFlag = false;
@@ -521,172 +437,86 @@ percent.addEventListener('click', () => {
     outputMain.value =  round(((+outputSecond.value.split(/([^\d|.]+)/gm)[0] / 100) * +outputMain.value),2);
     resizer(output,outputMain);
 })
-
-numbers.forEach(item => {
-    item.addEventListener('click', (e) => {
-        const target = e.target;
-        
-        if (target.classList.contains('number__nine')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 9;
-                equalFlag = false;
-                opFlag = false;
+keyboard.addEventListener('click', (e) => {
+    const target = e.target;
+    if (target.dataset.type === 'number') {
+        if (outputMain.value.match(/\./gm) && !opFlag) {
+            outputMain.value += target.dataset.marker;
+            equalFlag = false;
+            opFlag = false;
         } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
             memoryFlag = false;
             equalFlag = false;
             opFlag = false;
             sqFlag = false;
             sqrtFlag = false;
-            outputMain.value = 9;
+            outputMain.value = target.dataset.marker;
         } else if (outputMain.value != 0) {
-            outputMain.value += 9;
+            outputMain.value += target.dataset.marker;
         }
             outputMain.focus();
-        } else if (target.classList.contains('number__eight')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 8;
+    } else if (target.dataset.type === 'memory') {
+        if (target.dataset.marker === "mPlus") {
+            if (outputSecond.value.includes('=') || outputSecond.value.includes('sqr') || outputSecond.value.includes('√')) {
+                outputSecond.value = 0;
                 equalFlag = false;
-                opFlag = false;
-        } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-            memoryFlag = false;
-            equalFlag = false;
-            opFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
-            outputMain.value = 8;
-        } else if (outputMain.value != 0) {
-            outputMain.value += 8;
-        }
-            outputMain.focus();
-        } else if (target.classList.contains('number__seven')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 7;
-                equalFlag = false;
-                opFlag = false;
-        } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-            memoryFlag = false;
-            equalFlag = false;
-            opFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
-            outputMain.value = 7;
-        } else if (outputMain.value != 0) {
-            outputMain.value += 7;
-        }
-            outputMain.focus();
-        } else if (target.classList.contains('number__six')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 6;
-                equalFlag = false;
-                opFlag = false;
-        } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-            memoryFlag = false;
-            equalFlag = false;
-            opFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
-            outputMain.value = 6;
-        } else if (outputMain.value != 0) {
-            outputMain.value += 6;
-        }
-            outputMain.focus();
-        } else if (target.classList.contains('number__five')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 5;
-                equalFlag = false;
-                opFlag = false;
-        } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-            memoryFlag = false;
-            equalFlag = false;
-            opFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
-            outputMain.value = 5;
-        } else if (outputMain.value != 0) {
-            outputMain.value += 5;
-        }
-            outputMain.focus();
-        } else if (target.classList.contains('number__four')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 4;
-                equalFlag = false;
-                opFlag = false;
-        } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-            memoryFlag = false;
-            equalFlag = false;
-            opFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
-            outputMain.value = 4;
-        } else if (outputMain.value != 0) {
-            outputMain.value += 4;
-        }
-            outputMain.focus();
-        } else if (target.classList.contains('number__three')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 3;
-                equalFlag = false;
-                opFlag = false;
-        } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-            memoryFlag = false;
-            equalFlag = false;
-            opFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
-            outputMain.value = 3;
-        } else if (outputMain.value != 0) {
-            outputMain.value += 3;
-        }
-            outputMain.focus();
-        } else if (target.classList.contains('number__two')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 2;
-                equalFlag = false;
-                opFlag = false;
-        } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-            memoryFlag = false;
-            equalFlag = false;
-            opFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
-            outputMain.value = 2;
-        } else if (outputMain.value != 0) {
-            outputMain.value += 2;
-        }
-            outputMain.focus();
-        } else if (target.classList.contains('number__one')) {
-            if (outputMain.value.match(/\./gm) && !opFlag) {
-                outputMain.value += 1;
-                equalFlag = false;
-                opFlag = false;
-        } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-            memoryFlag = false;
-            equalFlag = false;
-            opFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
-            outputMain.value = 1;
-        } else if (outputMain.value != 0) {
-            outputMain.value += 1;
-        }
-            outputMain.focus();
-        } else if (target.classList.contains('number__zero')) {
-            if(outputMain.value.match(/\./gm) && !opFlag){
-                outputMain.value += 0;
-                equalFlag = false;
-                opFlag = false;
-            } else if (outputMain.value == 0 || equalFlag || opFlag || sqFlag || sqrtFlag) {
-                memoryFlag = false;
-                equalFlag = false;
-                opFlag = false;
-                sqFlag = false;
-                sqrtFlag = false;
-                outputMain.value = 0;
-            } else if (outputMain.value !== 0) {
-                outputMain.value += 0;
             }
-            outputMain.focus();
+            memoryFlag = true;
+            memoryRes += +outputMain.value;
+            document.querySelector('[data-marker="mResult"]').classList.remove('blur');
+            document.querySelector('[data-marker="mReset"]').classList.remove('blur');
+            opFlag = true;
+            equalFlag = true;
+            dotFlag = true;
+        } else if (target.dataset.marker === "mMinus") {
+            if (outputSecond.value.includes('=') || outputSecond.value.includes('sqr') || outputSecond.value.includes('√')) {
+                outputSecond.value = 0;
+                equalFlag = false;
+            }
+            memoryFlag = true;
+            memoryRes -= +outputMain.value;
+            document.querySelector('[data-marker="mResult"]').classList.remove('blur');
+            document.querySelector('[data-marker="mReset"]').classList.remove('blur');
+            opFlag = true;
+            equalFlag = true;
+        } else if (target.dataset.marker === "mReset") {
+            memoryRes = 0;
+            memoryFlag = false;
+            opFlag = true;
+            equalFlag = true;
+            memoryFlag = false;
+            document.querySelector('[data-marker="mResult"]').classList.add('blur');
+            document.querySelector('[data-marker="mReset"]').classList.add('blur');
+        } else if (target.dataset.marker === "mResult") {
+            outputMain.value = round(memoryRes,12);
+            result = memoryRes;
+            opFlag = true;
+            equalFlag = true;
         }
-        resizer(output,outputMain);
-    })
-    })
+    } else if (target.dataset.type === 'reset') {
+        if (target.dataset.marker === "resetAll") {
+            outputMain.value = 0;
+            outputSecond.value = 0;
+            result = 0;
+            memoryRes = 0;
+            opFlag = false;
+            equalFlag = false;
+            dotFlag = false;
+            sqFlag = false;
+            sqrtFlag = false;
+            document.querySelector('[data-marker="mResult"]').classList.add('blur');
+            document.querySelector('[data-marker="mReset"]').classList.add('blur');
+            memoryFlag = false;
+        } else if (target.dataset.marker === "reset") {
+            outputMain.value = 0;
+            outputSecond.value = 0;
+            result = 0;
+            opFlag = false;
+            equalFlag = false;
+            dotFlag = false;
+            sqFlag = false;
+            sqrtFlag = false;
+        }
+    }
+    resizer(output,outputMain);
+})
