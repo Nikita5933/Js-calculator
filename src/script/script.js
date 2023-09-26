@@ -1,18 +1,19 @@
 'use strict';
 
-const keyboard = document.querySelector('.keyboard');
-const outputMain = document.querySelector('.output__second input');
-const outputSecond = document.querySelector('.output__first input');
+const keyboard = document.querySelector('[data-keyboard]');
+const outputMain = document.querySelector('[data-input="second"]');
+const outputSecond = document.querySelector('[data-input="first"]');
 const output = document.querySelector('.output');
-const equal = document.querySelector('.equal');
+let sqrRes;
+let sqrtRes;
 let result = 0;
+let memoryRes = 0;
 let opFlag = false;
 let equalFlag = false;
 let dotFlag = false;
 let sqFlag = false;
 let sqrtFlag = false;
 let memoryFlag = false;
-let memoryRes = 0;
 
 function round(num, decimalPlaces = 0) {
     if (num < 0)
@@ -24,7 +25,6 @@ function round(num, decimalPlaces = 0) {
     resizer(output,outputMain);
     return (f >= .5 - e) ? Math.ceil(n) / p : Math.floor(n) / p;
 }
-
 
 function resizer(output,screen) {
     if (screen.value.length > 11) output.classList.add('number14');
@@ -40,7 +40,6 @@ function resizer(output,screen) {
         result = 0;
         }
     screen.value = screen.value.substring(0, 16);
-    
     if (screen.value.length < 13) output.classList.remove('number14');
     if (screen.value.length < 15) output.classList.remove('number16');
     if (opFlag && !equalFlag) {
@@ -49,138 +48,10 @@ function resizer(output,screen) {
     }
 }
 
-let sqrRes;
-let sqrtRes;
-equal.addEventListener('click', () => {
-    outputMain.focus();
-    if (outputSecond.value.match(/\s$/gm) == ' ' || sqFlag || sqrtFlag) {
-        if (outputSecond.value.includes('+')){
-            equalFlag = true;
-            result += +outputMain.value;
-        }
-        if (outputSecond.value.includes('-')) {
-            equalFlag = true;
-            result -= +outputMain.value;
-        }
-        if (outputSecond.value.includes('/')) {
-            equalFlag = true;
-            result /= +outputMain.value;
-        }
-        if (outputSecond.value.includes('*')) {
-            equalFlag = true;
-            result *= +outputMain.value;
-        }
-        if (outputSecond.value.includes('sqr') && outputSecond.value.includes('√')) {
-            if (outputSecond.value[outputSecond.value.length - 1] == '=') {
-                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${round(sqrRes,12)} =`;
-                equalFlag = true;
-                sqFlag = false;
-                sqrtFlag = false;
-                resizer(output,outputMain);
-                return;
-            }
-            sqrRes = +outputMain.value;
-            equalFlag = true;
-            sqFlag = false;
-            outputSecond.value += ' ='
-            outputMain.value = round(result,12);
-            resizer(output,outputMain);
-            return;
-        };
-        if(outputSecond.value.includes('sqr')) {
-            sqrRes = +outputMain.value;
-            equalFlag = true;
-            sqFlag = false;
-            outputSecond.value += ' ='
-            outputMain.value = round(result,12);
-            resizer(output,outputMain);
-            return;
-        }
-        if (outputSecond.value.includes('√')) {
-            sqrtRes = +outputMain.value;
-            equalFlag = true;
-            sqrtFlag = false;
-            outputSecond.value += ' ='
-            outputMain.value = round(result,12);
-            resizer(output,outputMain);
-            return;
-        }
-        outputSecond.value += +outputMain.value;
-        outputSecond.value += ' ='
-        outputMain.value = round(result,12);
-        resizer(output,outputMain);
-    } else if (outputSecond.value[outputSecond.value.length - 1] == '=') {
-        if(outputSecond.value.includes('sqr')) {
-            outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${round(sqrRes,6)} =`;
-            resizer(output,outputMain);
-            return;
-        }
-        if(outputSecond.value.includes('√')) {
-            outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${sqrtRes,15} =`;
-            resizer(output,outputMain);
-            return;
-        }
-        if(outputSecond.value.includes('.')) dotFlag = true;
-        if (outputSecond.value.split(/\d+/gm).includes(' + ')){
-            if(dotFlag) {
-                result += +outputSecond.value.split(/ \+ | =/gm).filter(item => item != '')[1];
-                outputSecond.value = `${round((result - +(outputSecond.value.split(/ \+ | =/gm).filter(item => item != '')[1])),12)} + ${+(outputSecond.value.split(/ \+ | =/gm).filter(item => item != '')[1])} =`;
-                outputMain.value = round(result,12);
-                resizer(output,outputMain);
-                return;
-            }
-            
-            result += +outputSecond.value.split(/\D+/gm).filter(item => item != '')[1];
-            outputSecond.value = `${round((result - (outputSecond.value.split(/\D+/gm).filter(item => item != ''))[1]),12)} + ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
-            outputMain.value = round(result,12);
-        }
-        if (outputSecond.value.split(/\d+/gm).includes(' - ')){
-            if(dotFlag) {
-            result -= +outputSecond.value.split(/ - | =/gm).filter(item => item != '')[1];
-            outputSecond.value = `${round((result + +(outputSecond.value.split(/ - | =/gm).filter(item => item != '')[1])),12)} - ${+(outputSecond.value.split(/ - | =/gm).filter(item => item != '')[1])} =`;
-            outputMain.value = round(result,12);
-            resizer(output,outputMain);
-            return;
-            }
-            result -= +outputSecond.value.split(/\D+/gm).filter(item => item != '')[1];
-            outputSecond.value = `${round((result + +(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])),12)} - ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
-            outputMain.value = round(result,12);
-        }
-        if (outputSecond.value.split(/\d+/gm).includes(' / ')){
-            if(outputSecond.value.includes('.')) dotFlag = true;
-            if(dotFlag) {
-            result /= +outputSecond.value.split(/ \/ | =/gm).filter(item => item != '')[1];
-            outputSecond.value = `${round((result * +(outputSecond.value.split(/ \/ | =/gm).filter(item => item != '')[1])),12)} / ${+(outputSecond.value.split(/ \/ | =/gm).filter(item => item != '')[1])} =`;
-            outputMain.value = round(result,12);
-            resizer(output,outputMain);
-            return;
-            }
-            result /= +outputSecond.value.split(/\D+/gm).filter(item => item != '')[1];
-            outputSecond.value = `${round((result * +(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])),12)} / ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
-            outputMain.value = round(result,12);
-        }
-        if (outputSecond.value.split(/\d+/gm).includes(' * ')){
-            if(outputSecond.value.includes('.')) dotFlag = true;
-            if(dotFlag) {
-            result *= +outputSecond.value.split(/ \* | =/gm).filter(item => item != '')[1];
-            outputSecond.value = `${round((result / +(outputSecond.value.split(/ \* | =/gm).filter(item => item != '')[1])),12)} * ${+(outputSecond.value.split(/ \* | =/gm).filter(item => item != '')[1])} =`;
-            outputMain.value = round(result,12);
-            resizer(output,outputMain);
-            return;
-            }
-            resizer(output,outputMain);
-            result *= +outputSecond.value.split(/\D+/gm).filter(item => item != '')[1];
-            outputSecond.value = `${round((result / +(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])),12)} * ${+(outputSecond.value.split(/\D+/gm).filter(item => item != '')[1])} =`;
-            outputMain.value = round(result,12);
-        }
-    }
-    resizer(output,outputMain);
-    sqrRes = 0;
-})
 keyboard.addEventListener('click', (e) => {
     const target = e.target;
     if (target.dataset.type === 'number') {
-        if (outputMain.value.match(/\./gm) && !opFlag) {
+        if (dotFlag && !opFlag) {
             outputMain.value += target.dataset.marker;
             equalFlag = false;
             opFlag = false;
@@ -191,6 +62,12 @@ keyboard.addEventListener('click', (e) => {
             sqFlag = false;
             sqrtFlag = false;
             outputMain.value = target.dataset.marker;
+            if (outputSecond.value.includes('=')) {
+                outputSecond.value = 0;
+                result = 0;
+                sqrRes = 0;
+                sqrtRes = 0;
+            }
         } else if (outputMain.value != 0) {
             outputMain.value += target.dataset.marker;
         }
@@ -258,6 +135,10 @@ keyboard.addEventListener('click', (e) => {
         } else if (target.dataset.marker === "del") {
             if (outputMain.value.length == 1) {
                 outputMain.value = 0;
+                } else if (equalFlag) {
+                    outputMain.value = 0;
+                    outputSecond.value = 0;
+                    equalFlag = false;
                 } else {
                     outputMain.value = outputMain.value.substring(0, outputMain.value.length - 1);
                 }
@@ -481,6 +362,118 @@ keyboard.addEventListener('click', (e) => {
             outputMain.value = round(result,12);
             outputSecond.value += ' - ';
         } else if (target.dataset.marker === "calculate") {
+            if ((!equalFlag && outputSecond.value != '0') || sqFlag || sqrtFlag) {
+                if (outputSecond.value.includes('+')){
+                    equalFlag = true;
+                    result += +outputMain.value;
+                }
+                if (outputSecond.value.includes('-')) {
+                    equalFlag = true;
+                    result -= +outputMain.value;
+                }
+                if (outputSecond.value.includes('/')) {
+                    equalFlag = true;
+                    result /= +outputMain.value;
+                }
+                if (outputSecond.value.includes('*')) {
+                    equalFlag = true;
+                    result *= +outputMain.value;
+                }
+                if (outputSecond.value.includes('sqr')) {
+                    if (outputSecond.value.includes('√')) {
+                        if (outputSecond.value.includes('=')) {
+                            outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${round(sqrRes,12)} =`;
+                            equalFlag = true;
+                            sqFlag = false;
+                            sqrtFlag = false;
+                            return;
+                        }
+                        sqrRes = +outputMain.value;
+                        equalFlag = true;
+                        sqFlag = false;
+                        outputSecond.value += ' ='
+                        outputMain.value = round(result,12);
+                        return;
+                    }
+                    sqrRes = +outputMain.value;
+                    equalFlag = true;
+                    sqFlag = false;
+                    outputSecond.value += ' ='
+                    outputMain.value = round(result,12);
+                    return;
+                };
+               
+                if (outputSecond.value.includes('√')) {
+                    sqrtRes = +outputMain.value;
+                    equalFlag = true;
+                    sqrtFlag = false;
+                    outputSecond.value += ' ='
+                    outputMain.value = round(result,12);
+                    return;
+                }
+                outputSecond.value += +outputMain.value;
+                outputSecond.value += ' ='
+                outputMain.value = round(result,12);
+            } else if (equalFlag) {
+                if(outputSecond.value.includes('sqr')) {
+                    outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${round(sqrRes,6)} =`;
+                    return;
+                }
+                if(outputSecond.value.includes('√')) {
+                    outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${round(sqrtRes,12)} =`;
+                    return;
+                }
+                if (outputSecond.value.includes('+')){
+                    if (opFlag) {
+                        result += +outputMain.value;
+                        outputSecond.value = `${round(result - outputMain.value,12)} + ${+(outputSecond.value.split(/([^\d|.]+)/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.]+)/gm)[2])} =`;
+                        outputMain.value = round(result,12);
+                        opFlag = false;
+                        return;
+                    }
+                    result += +outputSecond.value.split(/([^\d|.]+)/gm)[2];
+                    outputSecond.value = `${round((result - +outputSecond.value.split(/([^\d|.]+)/gm)[2]),12)} + ${+outputSecond.value.split(/([^\d|.]+)/gm)[2]} =`;
+                    outputMain.value = round(result,12);
+                }
+                if (outputSecond.value.includes('-')){
+                    if (opFlag) {
+                        result -= +outputMain.value;
+                        outputSecond.value = `${round(result + outputMain.value,12)} - ${+(outputSecond.value.split(/([^\d|.]+)/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.]+)/gm)[2])} =`;
+                        outputMain.value = round(result,12);
+                        opFlag = false;
+                        return;
+                    }
+                    result -= +outputSecond.value.split(/([^\d|.]+)/gm)[2];
+                    outputSecond.value = `${round((result + +outputSecond.value.split(/([^\d|.]+)/gm)[2]),12)} - ${+outputSecond.value.split(/([^\d|.]+)/gm)[2]} =`;
+                    outputMain.value = round(result,12);
+                }
+                if (outputSecond.value.includes('/')){
+                    if (opFlag) {
+                        result /= +outputMain.value;
+                        outputSecond.value = `${round(result * outputMain.value,12)} / ${+(outputSecond.value.split(/([^\d|.]+)/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.]+)/gm)[2])} =`;
+                        outputMain.value = round(result,12);
+                        opFlag = false;
+                        return;
+                    }
+                    result /= +outputSecond.value.split(/([^\d|.]+)/gm)[2];
+                    outputSecond.value = `${round((result * +outputSecond.value.split(/([^\d|.]+)/gm)[2]),12)} / ${+outputSecond.value.split(/([^\d|.]+)/gm)[2]} =`;
+                    outputMain.value = round(result,12);
+                }
+                if (outputSecond.value.includes('*')){
+                    if (opFlag) {
+                        result *= +outputMain.value;
+                        outputSecond.value = `${round(result / outputMain.value,12)} * ${+(outputSecond.value.split(/([^\d|.]+)/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.]+)/gm)[2])} =`;
+                        outputMain.value = round(result,12);
+                        opFlag = false;
+                        return;
+                    }
+                    result *= +outputSecond.value.split(/([^\d|.]+)/gm)[2];
+                    outputSecond.value = `${round((result / +outputSecond.value.split(/([^\d|.]+)/gm)[2]),12)} * ${+outputSecond.value.split(/([^\d|.]+)/gm)[2]} =`;
+                    outputMain.value = round(result,12);
+                }
+            }
+            sqrRes = 0;
+            sqrtRes = 0;
         } 
     }
     outputMain.focus();

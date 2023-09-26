@@ -12,10 +12,10 @@
     <div class="calc__container">
         <div class="calc">
             <div class="output">
-                <div class="output__first"><input readonly type="text" value="0"></div>
-                <div class="output__second"><input readonly type="text" value="0"></div>
+                <div class="output__first"><input data-input="first" readonly type="text" value="0"></div>
+                <div class="output__second"><input data-input="second" readonly type="text" value="0"></div>
             </div>
-            <div class="keyboard">
+            <div class="keyboard" data-keyboard>
                 <button data-type="memory" data-marker="mReset" class="blur">MC</button>
                 <button data-type="memory" data-marker="mResult" class="blur">MR</button>
                 <button data-type="memory" data-marker="mMinus">M-</button>
@@ -41,7 +41,7 @@
                 <button data-type="function" data-marker="subtraction">-</button>
                 <button data-type="dot">.</button>
                 <button data-type="number" data-marker="0">0</button>
-                <button data-type="function" data-marker="calculate" class="equal">=</button>
+                <button data-type="function" data-marker="calculate">=</button>
             </div>
         </div>
     </div>
