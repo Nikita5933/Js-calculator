@@ -178,15 +178,15 @@ keyboard.addEventListener('click', (e) => {
                     resizer(output,outputMain);
                     return;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '*') {
+                if (outputSecond.value.includes('*')) {
                     result *= +outputMain.value;
                     result *= +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '-') {
+                if (outputSecond.value.includes('-')) {
                     result -= +outputMain.value;
                     result *= +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '+') {
+                if (outputSecond.value.includes('+')) {
                     result += +outputMain.value;
                     result *= +outputMain.value ;
                 }
@@ -280,15 +280,15 @@ keyboard.addEventListener('click', (e) => {
                     resizer(output,outputMain);
                     return;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '/') {
+                if (outputSecond.value.includes('/')) {
                     result /= +outputMain.value;
                     result /= +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '-') {
+                if (outputSecond.value.includes('-')) {
                     result -= +outputMain.value;
                     result /= +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '+') {
+                if (outputSecond.value.includes('+')) {
                     result += +outputMain.value;
                     result /= +outputMain.value ;
                 }
@@ -307,15 +307,15 @@ keyboard.addEventListener('click', (e) => {
                 if (outputSecond.value == 0) {
                     outputSecond.value = +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '*') {
+                if (outputSecond.value.includes('*')) {
                     result *= +outputMain.value;
                     result -= +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '/') {
+                if (outputSecond.value.includes('/')) {
                     result /= +outputMain.value;
                     result -= +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '-') {
+                if (outputSecond.value.includes('-')) {
                     result -= +outputMain.value * 2;
                 }
                 result += +outputMain.value;
@@ -342,15 +342,15 @@ keyboard.addEventListener('click', (e) => {
                     resizer(output,outputMain);
                     return;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '*') {
+                if (outputSecond.value.includes('*')) {
                     result *= +outputMain.value;
                     result += +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '/') {
+                if (outputSecond.value.includes('/')) {
                     result /= +outputMain.value;
                     result += +outputMain.value;
                 }
-                if (outputSecond.value[outputSecond.value.length-2] == '+') {
+                if (outputSecond.value.includes('+')) {
                     result += +outputMain.value * 2;
                 }
                 result = result == 0 ? +outputMain.value : result -= +outputMain.value;
