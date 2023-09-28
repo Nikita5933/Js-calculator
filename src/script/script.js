@@ -23,22 +23,18 @@ function round(num, decimalPlaces = 0) {
     const f = n - Math.floor(n);
     const e = Number.EPSILON * n;
     resizer(output,outputMain);
-    return (f >= .5 - e) ? Math.ceil(n) / p : Math.floor(n) / p;
+    if (f >= .5 - e) {
+        if ((Math.ceil(n) / p) >= 99999999999999) {
+            return (Math.ceil(n) / p).toExponential(6);
+        }
+        return Math.ceil(n) / p;
+    }
+    return (Math.floor(n) / p);
 }
 
 function resizer(output,screen) {
     if (screen.value.length > 11) output.classList.add('number14');
     if (screen.value.length > 13) output.classList.add('number16');
-    if (screen.value > 9999999999999999) {
-        opFlag = true;
-        equalFlag = true;
-        dotFlag = false;
-        sqFlag = false;
-        sqrtFlag = false;
-        outputSecond.value = '0';
-        screen.value = 'Error';
-        result = 0;
-        }
     screen.value = screen.value.substring(0, 16);
     if (screen.value.length < 13) output.classList.remove('number14');
     if (screen.value.length < 15) output.classList.remove('number16');
@@ -186,7 +182,7 @@ keyboard.addEventListener('click', (e) => {
                     result -= +outputMain.value;
                     result *= +outputMain.value;
                 }
-                if (outputSecond.value.includes('+')) {
+                if (outputSecond.value.includes(' + ')) {
                     result += +outputMain.value;
                     result *= +outputMain.value ;
                 }
@@ -199,7 +195,7 @@ keyboard.addEventListener('click', (e) => {
             outputMain.value = round(result,12);
             outputSecond.value += ' / ';
         } else if (target.dataset.marker === "percentage") {
-            outputMain.value =  round(((+outputSecond.value.split(/([^\d|.]+)/gm)[0] / 100) * +outputMain.value),2);
+            outputMain.value =  round(((+outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0] / 100) * +outputMain.value),2);
         } else if (target.dataset.marker === "squareRoot") {
             if (outputSecond.value == '0') {
                 sqrtFlag = true;
@@ -210,13 +206,13 @@ keyboard.addEventListener('click', (e) => {
             }
             if (sqFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputMain.value =  round(Math.sqrt(+outputMain.value),15);
-                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} √(${outputSecond.value.split(/([^\d|.]+)/gm)[1].slice(3,outputSecond.value.split(/([^\d|.]+)/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0]} ${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1][1]} √(${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1].slice(3,outputSecond.value.split(/([^\d|.|]+ | [^e])/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[3]})`;
                 resizer(output,outputMain);
                 return;
             }
             if (sqrtFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputMain.value =  round(Math.sqrt(+outputMain.value),15);
-                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]}${outputSecond.value.split(/([^\d|.]+)/gm)[1]}√(${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1]}√(${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[3]})`;
                 resizer(output,outputMain);
                 return; 
             }
@@ -224,7 +220,7 @@ keyboard.addEventListener('click', (e) => {
             if (outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 if (outputSecond.value.includes('sqr')) {
                     outputMain.value =  round(Math.sqrt(+outputMain.value),15);
-                    outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]}${outputSecond.value.split(/([^\d|.]+)/gm)[1]}√(${outputSecond.value.split(/([^\d|.]+)/gm)[1]}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]}))`;
+                    outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1]}√(${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[3]}))`;
                     resizer(output,outputMain);
                     return;
                 }
@@ -234,7 +230,7 @@ keyboard.addEventListener('click', (e) => {
                 return;
             }
             outputMain.value =  round(Math.sqrt(+outputMain.value),15);
-            outputSecond.value = `√(${outputSecond.value.split(/([^\d|.]+)/gm)[1]}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+            outputSecond.value = `√(${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[3]})`;
         } else if (target.dataset.marker === "square") {
             if (outputSecond.value == '0') {
                 sqFlag = true;
@@ -245,13 +241,13 @@ keyboard.addEventListener('click', (e) => {
             }
             if (sqrtFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputMain.value = round(Math.pow(+outputMain.value, 2),6);
-                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} sqr(${outputSecond.value.split(/([^\d|.]+)/gm)[1].slice(3,outputSecond.value.split(/([^\d|.]+)/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0]} ${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1][1]} sqr(${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1].slice(3,outputSecond.value.split(/([^\d|.|]+ | [^e])/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[3]})`;
                 resizer(output,outputMain);
                 return;
             }
             if (sqFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputMain.value = round(Math.pow(+outputMain.value, 2),6);;
-                outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]}${outputSecond.value.split(/([^\d|.]+)/gm)[1]}sqr(${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+                outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1]}sqr(${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[3]})`;
                 resizer(output,outputMain);
                 return; 
             }
@@ -263,7 +259,7 @@ keyboard.addEventListener('click', (e) => {
                 return
             }
             outputMain.value = round(Math.pow(+outputMain.value, 2),6);
-            outputSecond.value = `sqr(${outputSecond.value.split(/([^\d|.]+)/gm)[1]}${outputSecond.value.split(/([^\d|.]+)/gm)[2]}${outputSecond.value.split(/([^\d|.]+)/gm)[3]})`;
+            outputSecond.value = `sqr(${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[3]})`;
         } else if (target.dataset.marker === "multiplication") {
             opFlag = true;
             if (!equalFlag) {
@@ -288,7 +284,7 @@ keyboard.addEventListener('click', (e) => {
                     result -= +outputMain.value;
                     result /= +outputMain.value;
                 }
-                if (outputSecond.value.includes('+')) {
+                if (outputSecond.value.includes(' + ')) {
                     result += +outputMain.value;
                     result /= +outputMain.value ;
                 }
@@ -350,7 +346,7 @@ keyboard.addEventListener('click', (e) => {
                     result /= +outputMain.value;
                     result += +outputMain.value;
                 }
-                if (outputSecond.value.includes('+')) {
+                if (outputSecond.value.includes(' + ')) {
                     result += +outputMain.value * 2;
                 }
                 result = result == 0 ? +outputMain.value : result -= +outputMain.value;
@@ -363,7 +359,7 @@ keyboard.addEventListener('click', (e) => {
             outputSecond.value += ' - ';
         } else if (target.dataset.marker === "calculate") {
             if ((!equalFlag && outputSecond.value != '0') || sqFlag || sqrtFlag) {
-                if (outputSecond.value.includes('+')){
+                if (outputSecond.value.includes(' + ')){
                     equalFlag = true;
                     result += +outputMain.value;
                 }
@@ -382,7 +378,7 @@ keyboard.addEventListener('click', (e) => {
                 if (outputSecond.value.includes('sqr')) {
                     if (outputSecond.value.includes('√')) {
                         if (outputSecond.value.includes('=')) {
-                            outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${round(sqrRes,12)} =`;
+                            outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0]} ${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1][1]} ${round(sqrRes,12)} =`;
                             equalFlag = true;
                             sqFlag = false;
                             sqrtFlag = false;
@@ -416,59 +412,59 @@ keyboard.addEventListener('click', (e) => {
                 outputMain.value = round(result,12);
             } else if (equalFlag) {
                 if(outputSecond.value.includes('sqr')) {
-                    outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${round(sqrRes,6)} =`;
+                    outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0]} ${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1][1]} ${round(sqrRes,6)} =`;
                     return;
                 }
                 if(outputSecond.value.includes('√')) {
-                    outputSecond.value = `${outputSecond.value.split(/([^\d|.]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.]+)/gm)[1][1]} ${round(sqrtRes,12)} =`;
+                    outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0]} ${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[1][1]} ${round(sqrtRes,12)} =`;
                     return;
                 }
-                if (outputSecond.value.includes('+')){
+                if (outputSecond.value.includes(' + ')){
                     if (opFlag) {
                         result += +outputMain.value;
-                        outputSecond.value = `${round(result - outputMain.value,12)} + ${+(outputSecond.value.split(/([^\d|.]+)/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.]+)/gm)[2])} =`;
+                        outputSecond.value = `${round(result - outputMain.value,12)} + ${+(outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2])} =`;
                         outputMain.value = round(result,12);
                         opFlag = false;
                         return;
                     }
-                    result += +outputSecond.value.split(/([^\d|.]+)/gm)[2];
-                    outputSecond.value = `${round((result - +outputSecond.value.split(/([^\d|.]+)/gm)[2]),12)} + ${+outputSecond.value.split(/([^\d|.]+)/gm)[2]} =`;
+                    result += +outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2];
+                    outputSecond.value = `${round((result - +outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]),12)} + ${round(outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2],12)} =`;
                     outputMain.value = round(result,12);
                 }
                 if (outputSecond.value.includes('-')){
                     if (opFlag) {
                         result -= +outputMain.value;
-                        outputSecond.value = `${round(result + outputMain.value,12)} - ${+(outputSecond.value.split(/([^\d|.]+)/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.]+)/gm)[2])} =`;
+                        outputSecond.value = `${round(result + outputMain.value,12)} - ${+(outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2])} =`;
                         outputMain.value = round(result,12);
                         opFlag = false;
                         return;
                     }
-                    result -= +outputSecond.value.split(/([^\d|.]+)/gm)[2];
-                    outputSecond.value = `${round((result + +outputSecond.value.split(/([^\d|.]+)/gm)[2]),12)} - ${+outputSecond.value.split(/([^\d|.]+)/gm)[2]} =`;
+                    result -= +outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2];
+                    outputSecond.value = `${round((result + +outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]),12)} - ${round(outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2],12)} =`;
                     outputMain.value = round(result,12);
                 }
                 if (outputSecond.value.includes('/')){
                     if (opFlag) {
                         result /= +outputMain.value;
-                        outputSecond.value = `${round(result * outputMain.value,12)} / ${+(outputSecond.value.split(/([^\d|.]+)/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.]+)/gm)[2])} =`;
+                        outputSecond.value = `${round(result * outputMain.value,12)} / ${+(outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2])} =`;
                         outputMain.value = round(result,12);
                         opFlag = false;
                         return;
                     }
-                    result /= +outputSecond.value.split(/([^\d|.]+)/gm)[2];
-                    outputSecond.value = `${round((result * +outputSecond.value.split(/([^\d|.]+)/gm)[2]),12)} / ${+outputSecond.value.split(/([^\d|.]+)/gm)[2]} =`;
+                    result /= +outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2];
+                    outputSecond.value = `${round((result * +outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]),12)} / ${round(outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2],12)} =`;
                     outputMain.value = round(result,12);
                 }
                 if (outputSecond.value.includes('*')){
                     if (opFlag) {
                         result *= +outputMain.value;
-                        outputSecond.value = `${round(result / outputMain.value,12)} * ${+(outputSecond.value.split(/([^\d|.]+)/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.]+)/gm)[2])} =`;
+                        outputSecond.value = `${round(result / outputMain.value,12)} * ${+(outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2] == '' ? +outputMain.value : outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2])} =`;
                         outputMain.value = round(result,12);
                         opFlag = false;
                         return;
                     }
-                    result *= +outputSecond.value.split(/([^\d|.]+)/gm)[2];
-                    outputSecond.value = `${round((result / +outputSecond.value.split(/([^\d|.]+)/gm)[2]),12)} * ${+outputSecond.value.split(/([^\d|.]+)/gm)[2]} =`;
+                    result *= +outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2];
+                    outputSecond.value = `${round((result / +outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]),12)} * ${round(outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2],12)} =`;
                     outputMain.value = round(result,12);
                 }
             }
