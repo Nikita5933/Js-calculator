@@ -160,6 +160,7 @@ keyboard.addEventListener('click', (e) => {
     } else if (target.dataset.type === 'function') {
         if (target.dataset.marker === "division") {
             opFlag = true;
+            if (memoryFlag && result == 0) result = +outputMain.value;
             if (!equalFlag) {
                 if (outputSecond.value == 0) {
                     outputSecond.value = +outputMain.value;
@@ -262,6 +263,7 @@ keyboard.addEventListener('click', (e) => {
             outputSecond.value = `sqr(${outputSecond.value.split(/([^\d|.|]+)/gm)[1]}${outputSecond.value.split(/([^\d|.|]+)/gm)[2]}${outputSecond.value.split(/([^\d|.|]+)/gm)[3]})`;
         } else if (target.dataset.marker === "multiplication") {
             opFlag = true;
+            if (memoryFlag && result == 0) result = +outputMain.value;
             if (!equalFlag) {
                 if (outputSecond.value == 0) {
                     outputSecond.value = +outputMain.value;
@@ -299,6 +301,7 @@ keyboard.addEventListener('click', (e) => {
             outputSecond.value += ' * ';
         } else if (target.dataset.marker === "addition") {
             opFlag = true;
+            if (memoryFlag && result == 0) result = +outputMain.value;
             if (!equalFlag) {
                 if (outputSecond.value == 0) {
                     outputSecond.value = +outputMain.value;
@@ -324,6 +327,7 @@ keyboard.addEventListener('click', (e) => {
             outputSecond.value += ' + ';
         } else if (target.dataset.marker === "subtraction") {
             opFlag = true;
+            if (memoryFlag && result == 0) result = +outputMain.value;
             if (!equalFlag) {
                 if (outputSecond.value == 0) {
                     outputSecond.value = +outputMain.value;
