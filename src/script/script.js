@@ -31,6 +31,24 @@ function round(num, decimalPlaces = 0) {
     }
     return (Math.floor(n) / p);
 }
+function resetFunction() {
+    outputMain.value = 0;
+    outputSecond.value = 0;
+    result = 0;
+    opFlag = false;
+    equalFlag = false;
+    dotFlag = false;
+    sqFlag = false;
+    sqrtFlag = false;
+}
+
+function minusError() {
+    if (result < 0) {
+        resetFunction();
+        outputMain.value = 'Minus error';
+        return;
+    }
+}
 
 function resizer(output,screen) {
     if (screen.value.length > 11) output.classList.add('number14');
@@ -46,6 +64,9 @@ function resizer(output,screen) {
 
 keyboard.addEventListener('click', (e) => {
     const target = e.target;
+    if (outputMain.value === 'Minus error') {
+        outputMain.value = 0;
+    }
     if (target.dataset.type === 'number') {
         if (dotFlag && !opFlag) {
             outputMain.value += target.dataset.marker;
@@ -107,33 +128,20 @@ keyboard.addEventListener('click', (e) => {
         }
     } else if (target.dataset.type === 'reset') {
         if (target.dataset.marker === "resetAll") {
-            outputMain.value = 0;
-            outputSecond.value = 0;
-            result = 0;
+            resetFunction();
             memoryRes = 0;
-            opFlag = false;
-            equalFlag = false;
-            dotFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
             document.querySelector('[data-marker="mResult"]').classList.add('blur');
             document.querySelector('[data-marker="mReset"]').classList.add('blur');
             memoryFlag = false;
         } else if (target.dataset.marker === "reset") {
-            outputMain.value = 0;
-            outputSecond.value = 0;
-            result = 0;
-            opFlag = false;
-            equalFlag = false;
-            dotFlag = false;
-            sqFlag = false;
-            sqrtFlag = false;
+           resetFunction();
         } else if (target.dataset.marker === "del") {
             if (outputMain.value.length == 1) {
                 outputMain.value = 0;
                 } else if (equalFlag) {
                     outputMain.value = 0;
                     outputSecond.value = 0;
+                    result = 0;
                     equalFlag = false;
                 } else {
                     outputMain.value = outputMain.value.substring(0, outputMain.value.length - 1);
@@ -155,10 +163,16 @@ keyboard.addEventListener('click', (e) => {
     } else if (!equalFlag && !opFlag && !outputMain.value.match(/\./gm)) {
         outputMain.value += '.';  
     } else if (equalFlag && !opFlag && !outputMain.value.match(/\./gm)) {
+        resetFunction();
+        dotFlag = true;
         outputMain.value = '0.';
     }
     } else if (target.dataset.type === 'function') {
         if (target.dataset.marker === "division") {
+            if (result < 0) {
+                minusError();
+                return;
+            }
             opFlag = true;
             if (memoryFlag && result == 0) result = +outputMain.value;
             if (!equalFlag) {
@@ -172,7 +186,6 @@ keyboard.addEventListener('click', (e) => {
                     outputMain.value = round(result,12);
                     outputSecond.value += ' / ';
                     outputMain.focus();
-                    resizer(output,outputMain);
                     return;
                 }
                 if (outputSecond.value.includes('*')) {
@@ -196,25 +209,45 @@ keyboard.addEventListener('click', (e) => {
             outputMain.value = round(result,12);
             outputSecond.value += ' / ';
         } else if (target.dataset.marker === "percentage") {
+            if (result < 0) {
+                minusError();
+                return;
+            }
+            if (outputSecond.value.includes('=')) {
+                let t = +outputMain.value;
+                resetFunction();
+                outputMain.value =  round(((t / 100) * t),2);
+                opFlag = true;
+                return;
+            }
             outputMain.value =  round(((+outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[0] / 100) * +outputMain.value),2);
         } else if (target.dataset.marker === "squareRoot") {
+            if (result < 0) {
+                minusError();
+                return;
+            }
             if (outputSecond.value == '0') {
                 sqrtFlag = true;
                 outputSecond.value = `√(${outputMain.value})`;
                 outputMain.value =  round(Math.sqrt(+outputMain.value),15);
-                resizer(output,outputMain);
+                return;
+            }
+            if (outputSecond.value.includes('=')) {
+                let t = result;
+                resetFunction();
+                sqFlag = true;
+                outputSecond.value = `√(${t})`;
+                outputMain.value = round(Math.sqrt(t, 2),6);
                 return;
             }
             if (sqFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputMain.value =  round(Math.sqrt(+outputMain.value),15);
                 outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.|]+)/gm)[1][1]} √(${outputSecond.value.split(/([^\d|.|]+)/gm)[1].slice(3,outputSecond.value.split(/([^\d|.|]+)/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.|]+)/gm)[2]}${outputSecond.value.split(/([^\d|.|]+)/gm)[3]})`;
-                resizer(output,outputMain);
                 return;
             }
             if (sqrtFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputMain.value =  round(Math.sqrt(+outputMain.value),15);
                 outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+)/gm)[0]}${outputSecond.value.split(/([^\d|.|]+)/gm)[1]}√(${outputSecond.value.split(/([^\d|.|]+)/gm)[2]}${outputSecond.value.split(/([^\d|.|]+)/gm)[3]})`;
-                resizer(output,outputMain);
                 return; 
             }
             sqrtFlag = true;
@@ -222,46 +255,56 @@ keyboard.addEventListener('click', (e) => {
                 if (outputSecond.value.includes('sqr')) {
                     outputMain.value =  round(Math.sqrt(+outputMain.value),15);
                     outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+)/gm)[0]}${outputSecond.value.split(/([^\d|.|]+)/gm)[1]}√(${outputSecond.value.split(/([^\d|.|]+)/gm)[1]}${outputSecond.value.split(/([^\d|.|]+ | [^e])/gm)[2]}${outputSecond.value.split(/([^\d|.|]+)/gm)[3]}))`;
-                    resizer(output,outputMain);
                     return;
                 }
                 outputSecond.value += `√(${outputMain.value})`;
                 outputMain.value =  round(Math.sqrt(+outputMain.value),15);
-                resizer(output,outputMain);
                 return;
             }
             outputMain.value =  round(Math.sqrt(+outputMain.value),15);
             outputSecond.value = `√(${outputSecond.value.split(/([^\d|.|]+)/gm)[1]}${outputSecond.value.split(/([^\d|.|]+)/gm)[2]}${outputSecond.value.split(/([^\d|.|]+)/gm)[3]})`;
         } else if (target.dataset.marker === "square") {
+            if (result < 0) {
+                minusError();
+                return;
+            }
             if (outputSecond.value == '0') {
                 sqFlag = true;
                 outputSecond.value = `sqr(${outputMain.value})`;
                 outputMain.value = round(Math.pow(+outputMain.value, 2),6);
-                resizer(output,outputMain);
+                return;
+            }
+            if (outputSecond.value.includes('=')) {
+                let t = result;
+                resetFunction();
+                sqFlag = true;
+                outputSecond.value = `sqr(${t})`;
+                outputMain.value = round(Math.pow(t, 2),6);
                 return;
             }
             if (sqrtFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputMain.value = round(Math.pow(+outputMain.value, 2),6);
                 outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+)/gm)[0]} ${outputSecond.value.split(/([^\d|.|]+)/gm)[1][1]} sqr(${outputSecond.value.split(/([^\d|.|]+)/gm)[1].slice(3,outputSecond.value.split(/([^\d|.|]+)/gm[1]).join('').length -  1)}${outputSecond.value.split(/([^\d|.|]+)/gm)[2]}${outputSecond.value.split(/([^\d|.|]+)/gm)[3]})`;
-                resizer(output,outputMain);
                 return;
             }
             if (sqFlag && outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputMain.value = round(Math.pow(+outputMain.value, 2),6);;
                 outputSecond.value = `${outputSecond.value.split(/([^\d|.|]+)/gm)[0]}${outputSecond.value.split(/([^\d|.|]+)/gm)[1]}sqr(${outputSecond.value.split(/([^\d|.|]+)/gm)[2]}${outputSecond.value.split(/([^\d|.|]+)/gm)[3]})`;
-                resizer(output,outputMain);
                 return; 
             }
             sqFlag = true;
             if (outputSecond.value.match(/\+|\-|\*|\//gm)) {
                 outputSecond.value += `sqr(${outputMain.value})`;
                 outputMain.value = round(Math.pow(+outputMain.value, 2),6);
-                resizer(output,outputMain);
                 return
             }
             outputMain.value = round(Math.pow(+outputMain.value, 2),6);
             outputSecond.value = `sqr(${outputSecond.value.split(/([^\d|.|]+)/gm)[1]}${outputSecond.value.split(/([^\d|.|]+)/gm)[2]}${outputSecond.value.split(/([^\d|.|]+)/gm)[3]})`;
         } else if (target.dataset.marker === "multiplication") {
+            if (result < 0) {
+                minusError();
+                return;
+            }
             opFlag = true;
             if (memoryFlag && result == 0) result = +outputMain.value;
             if (!equalFlag) {
@@ -275,7 +318,6 @@ keyboard.addEventListener('click', (e) => {
                     outputMain.value = round(result,12);
                     outputSecond.value += ' * ';
                     outputMain.focus();
-                    resizer(output,outputMain);
                     return;
                 }
                 if (outputSecond.value.includes('/')) {
@@ -300,6 +342,10 @@ keyboard.addEventListener('click', (e) => {
             outputMain.value = round(result,12);
             outputSecond.value += ' * ';
         } else if (target.dataset.marker === "addition") {
+            if (result < 0) {
+                minusError();
+                return;
+            }
             opFlag = true;
             if (memoryFlag && result == 0) result = +outputMain.value;
             if (!equalFlag) {
@@ -326,6 +372,10 @@ keyboard.addEventListener('click', (e) => {
             outputMain.value = round(result,12);
             outputSecond.value += ' + ';
         } else if (target.dataset.marker === "subtraction") {
+            if (result < 0) {
+                minusError();
+                return;
+            }
             opFlag = true;
             if (memoryFlag && result == 0) result = +outputMain.value;
             if (!equalFlag) {
@@ -339,7 +389,6 @@ keyboard.addEventListener('click', (e) => {
                     outputMain.value = round(result,12);
                     outputSecond.value += ' - ';
                     outputMain.focus();
-                    resizer(output,outputMain);
                     return;
                 }
                 if (outputSecond.value.includes('*')) {
