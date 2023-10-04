@@ -36,6 +36,7 @@ html {
     display: grid;
     grid-template-columns: repeat(4, minmax(1.563rem, 6.48rem));
     grid-template-rows: repeat(7, minmax(1.563rem, 5rem));
+    justify-content: center;
     gap: 2px;
 }
 
@@ -94,7 +95,7 @@ sup {
 
 .output__second input {
     background-color: rgba(0, 0, 0, .0);
-    margin-top: 10px;
+    margin-top: 0.625rem;
     color: white;
     font-size: 3.5rem;
     width: 100%;
@@ -103,14 +104,14 @@ sup {
     outline: none;
 }
 
-.number14 div:last-child input {
+.smaller__first div:last-child input {
     font-size: 3rem;
-    margin-top: 15px;
+    margin-top: 0.938rem;
 }
 
-.number16 div:last-child input {
+.smaller__second div:last-child input {
     font-size: 2.55rem;
-    margin-top: 20px;
+    margin-top: 1.25rem;
 }
 
 .keyboard button.blur {
@@ -147,15 +148,16 @@ sup {
     }
 
     .output__second input {
-        font-size: 2.9rem;
+        font-size: 3.5rem;
     }
 
-    .number14 div:last-child input {
-        font-size: 2.55rem;
+    .smaller__first div:last-child input {
+        font-size: 3.2rem;
     }
 
-    .number16 div:last-child input {
-        font-size: 2rem;
+
+    .smaller__second div:last-child input {
+        font-size: 2.8rem;
     }
 }
 
@@ -219,11 +221,11 @@ sup {
         font-size: 2.9rem;
     }
 
-    .number14 div:last-child input {
+    .smaller__first div:last-child input {
         font-size: 2.55rem;
     }
 
-    .number16 div:last-child input {
+    .smaller__second div:last-child input {
         font-size: 2rem;
     }
 }

@@ -51,14 +51,14 @@ function minusError() {
 }
 
 function resizer(output,screen) {
-    if (screen.value.length > 11) output.classList.add('number14');
-    if (screen.value.length > 13) output.classList.add('number16');
+    if (screen.value.length > 11) output.classList.add('smaller__first');
+    if (screen.value.length > 13) output.classList.add('smaller__second');
     screen.value = screen.value.substring(0, 16);
-    if (screen.value.length < 13) output.classList.remove('number14');
-    if (screen.value.length < 15) output.classList.remove('number16');
+    if (screen.value.length < 13) output.classList.remove('smaller__first');
+    if (screen.value.length < 15) output.classList.remove('smaller__second');
     if (opFlag && !equalFlag) {
-        output.classList.remove('number14')
-        output.classList.remove('number16')
+        output.classList.remove('smaller__first')
+        output.classList.remove('smaller__second')
     }
 }
 
@@ -113,6 +113,7 @@ keyboard.addEventListener('click', (e) => {
             opFlag = true;
             equalFlag = true;
         } else if (target.dataset.marker === "mReset") {
+            if (memoryRes == 0 && document.querySelector('[data-marker="mReset"]').classList.contains('blur')) return;
             memoryRes = 0;
             memoryFlag = false;
             opFlag = true;
@@ -121,6 +122,7 @@ keyboard.addEventListener('click', (e) => {
             document.querySelector('[data-marker="mResult"]').classList.add('blur');
             document.querySelector('[data-marker="mReset"]').classList.add('blur');
         } else if (target.dataset.marker === "mResult") {
+            if (memoryRes == 0 && document.querySelector('[data-marker="mResult"]').classList.contains('blur')) return;
             outputMain.value = round(memoryRes,12);
             result = memoryRes;
             opFlag = true;
